@@ -3,30 +3,51 @@ import { useEffect, useState } from 'react';
 import Keyboard from './components/Keyboard';
 import Message from './components/Message';
 import { getKeyboardStates } from './lib/utils';
+import words from './assets/words.json';
+import Hint from './components/Hint';
+
 export default function App() {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState('');
   const [solution, setSolution] = useState('');
   const [message, setMessage] = useState('');
   const [hint, setHint] = useState('');
+  const [isGameOver, setIsGameOver] = useState(false);
 
+  const data = words.words
+  
   useEffect(() => {
     async function fetchWord() {
       try {
-        const endPoint = 'https://random-word-api.herokuapp.com/word?length=5';
-        const response = await fetch(endPoint);
-        const [word]: string[] = await response.json();
-        setSolution(word);
+        const randomWord = data[Math.floor(Math.random() * data.length)];
+        setSolution(randomWord);
       } catch (error) {
         console.log('Error:', error);
         setSolution('ninja');
       }
     }
     fetchWord();
-  }, []);
-  setTimeout(() => {
-    console.log(solution);
-  }, 1500);
+  }, [data]);
+  
+  useEffect(() => {
+    async function fetchHint() {
+      if (!solution) return;
+      try {
+        const response = await fetch(`/api/${solution}`);
+        const responseData = await response.json();
+        const definition = responseData.entries[0].senses[0].definition;
+        console.log(definition);
+        setHint(definition);
+      } catch (error) {
+        console.log('Error:', error);
+        setHint('hint unavailable');
+      }
+    }
+    fetchHint();
+  }, [solution]);
+
+  console.log(solution);
+  
   function showMessage(text: string) {
     setMessage(text);
     setTimeout(() => {
@@ -41,6 +62,11 @@ export default function App() {
     if (key === 'ENTER') {
       if (currentGuess.length === 5) {
         setGuesses([...guesses, currentGuess]);
+
+        if (currentGuess === solution) {
+          setIsGameOver(true);
+          showMessage('Congrats, you won');
+        }
         setCurrentGuess('');
       }
     } else if (key === 'BACKSPACE') {
@@ -50,25 +76,25 @@ export default function App() {
       setCurrentGuess((prevGuess) => prevGuess + key.toLocaleLowerCase());
     }
   }
-  console.log(currentGuess);
   const keyboardStates = getKeyboardStates(guesses, solution);
+
+  setTimeout(() => {
+    console.log(solution);
+  }, 1200);
+
   return (
     <div className='flex flex-col justify-center items-center dark'>
-      {message ||
-        (hint && (
-          <Message
-            message={message}
-            hint={hint}
-          />
-        ))}
+      {hint && <Hint hint={hint}/>}
       <Grid
         guesses={guesses}
         currentGuess={currentGuess}
         solution={solution}
-      />
+        />
+        {message && <Message message={message} />}
       <Keyboard
         onKeyPress={handleKeys}
         keyboardStates={keyboardStates}
+        isGameOver={isGameOver}
       />
     </div>
   );

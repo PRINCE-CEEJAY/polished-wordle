@@ -7,21 +7,28 @@ const KEYBOARD_ROWS = [
   ['Enter', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Backspace'],
 ];
 
-export default function Keyboard({ onKeyPress, keyboardStates }: KEY_PRESS) {
+export default function Keyboard({
+  onKeyPress,
+  keyboardStates,
+  isGameOver,
+}: KEY_PRESS) {
   const handleClick = (key: string) => {
-    onKeyPress(key.toUpperCase());
-    console.log(key);
+    if (!isGameOver) {
+      onKeyPress(key.toUpperCase());
+    }
   };
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key;
-      if (key == 'Enter' || key == 'Backspace' || /^[a-zA-Z]$/.test(key)) {
-        onKeyPress(key.toUpperCase());
+      if (!isGameOver) {
+        if (key == 'Enter' || key == 'Backspace' || /^[a-zA-Z]$/.test(key)) {
+          onKeyPress(key.toUpperCase());
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onKeyPress]);
+  }, [onKeyPress, isGameOver]);
 
   return (
     <div className='flex flex-col gap-1 pt-0 pb-0 pl-2 pr-2 min-w-[50%] max-w-[60%] justify-center'>
