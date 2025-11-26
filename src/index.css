@@ -156,15 +156,42 @@
     @apply bg-background text-foreground;
   }
 }
-.correct {
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid black;
+  font-size: xx-large;
+  text-transform: uppercase;
+  background: black;
+  border-radius: 10px;
+}
+/* Wordle */
+.cell-correct {
   background-color: green;
   border-color: green;
 }
-.present {
+.cell-present {
   background-color: yellow;
   border-color: yellow;
 }
-.absent {
-  background-color: gray;
-  border-color: gray;
+.cell-absent {
+  background-color: #3a3a3c;
+  border-color: #3a3a3c;
+}
+.cell:not(:empty) {
+  animation: pop 0.1s ease;
+}
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

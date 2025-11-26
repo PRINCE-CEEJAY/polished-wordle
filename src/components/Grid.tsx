@@ -17,7 +17,10 @@ export default function Grid({ guesses, currentGuess, solution }: GRID_PROPS) {
       {Array(rows)
         .fill('')
         .map((_, rowIndex) => {
-          const states = getLetterState(allGuesses[rowIndex], solution);
+          const isComplete = guesses.length > rowIndex;
+          const states = isComplete
+            ? getLetterState(allGuesses[rowIndex], solution)
+            : Array(5).fill('');
           return (
             <div
               key={rowIndex}
@@ -31,7 +34,7 @@ export default function Grid({ guesses, currentGuess, solution }: GRID_PROPS) {
                   return (
                     <div
                       key={rowIndex - colIndex}
-                      className={`flex justify-center items-center w-12 h-12 border-2 font-bold text-3xl uppercase rounded-xl bg-black ${letterState}`}
+                      className={`cell cell-${letterState}`}
                     >
                       {letter}
                     </div>
