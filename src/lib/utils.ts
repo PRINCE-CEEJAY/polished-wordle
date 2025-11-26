@@ -9,14 +9,14 @@ const states: string[] = Array(5).fill('')
 export function getLetterState(guess:string, solution:string){
 if(!guess || !solution) return Array(5).fill('absent');
 
-const guessChars = [...guess]
-const solutionChars = [...solution]
+const guessChars: string[] = [...guess]
+const solutionChars: string[] = [...solution]
 
 // Mark green
 guessChars.forEach((char, i)=>{
   if(char === solutionChars[i]){
     states[i] = 'correct';
-    solutionChars[i] = 'null'
+    solutionChars[i] = ''
   }
 })
 
@@ -27,7 +27,7 @@ guessChars.forEach((char, i) => {
   const solutionIndex = solutionChars.indexOf(char)
   if(solutionIndex !== -1){
     states[i] = 'present'
-    solutionChars[solutionIndex] = 'null'
+    solutionChars[solutionIndex] = ''
   }
 });
 return states;

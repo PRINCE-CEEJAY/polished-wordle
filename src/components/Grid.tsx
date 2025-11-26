@@ -1,9 +1,7 @@
+import type { GRID_PROPS } from "../../Types";
 const rows = 6;
 const cols = 5;
-type GRID_PROPS = {
-  guesses: string[];
-  currentGuess: string;
-};
+
 export default function Grid({ guesses, currentGuess }: GRID_PROPS) {
   const allGuesses = [...guesses];
   if (currentGuess) {

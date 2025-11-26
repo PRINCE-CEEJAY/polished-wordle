@@ -6,6 +6,7 @@ export default function App() {
   const [guesses, setGuesses] = useState<string[]>(['Trees']);
   const [currentGuess, setCurrentGuess] = useState('');
   const [message, setMessage] = useState('')
+  const [hint, setHint] = useState('')
 
   function showMessage(text: string){
     setMessage(text)
@@ -35,9 +36,7 @@ export default function App() {
   console.log(currentGuess);
   return (
     <div className='flex flex-col justify-center items-center dark'>
-      {message && 
-      <Message message = {message}/>
-      }
+      {message || hint && <Message message = {message} hint = {hint}/>}
       <Grid guesses={guesses} currentGuess = {currentGuess}/>
       <Keyboard onKeyPress={handleKeys} />
     </div>

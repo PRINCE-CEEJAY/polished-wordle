@@ -1,13 +1,13 @@
 import { Delete } from 'lucide-react';
 import { useEffect } from 'react';
-
+import type { KEY_PRESS } from '../../Types';
 const KEYBOARD_ROWS = [
   ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
   ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
   ['Enter', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Backspace'],
 ];
 
-export default function Keyboard({ onKeyPress }:{onKeyPress:(key:string)=>void}) {
+export default function Keyboard({ onKeyPress }: KEY_PRESS) {
   const handleClick = (key: string) => {
     onKeyPress(key.toUpperCase());
     console.log(key)
