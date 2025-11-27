@@ -6,6 +6,8 @@ import { getKeyboardStates } from './lib/utils';
 import words from './assets/words.json';
 import Hint from './components/Hint';
 import GameOver from './components/game-over-modal';
+import Start from './components/Start';
+import Timer from './components/Timer';
 
 export default function App() {
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -14,6 +16,9 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [hint, setHint] = useState('');
   const [isGameOver, setIsGameOver] = useState(false);
+  const [startGame, setStartGame] = useState(false)
+  const [difficulty, setDifficulty] = useState<'Easy'|'Medium'|'Hard'>('Easy')
+  const [timer, setTimer] = useState(120)
 
   const data = words.words
   
@@ -45,6 +50,8 @@ export default function App() {
     }
     fetchHint();
   }, [solution]);
+
+
 
   console.log(solution);
   
@@ -78,14 +85,32 @@ export default function App() {
   }
   const keyboardStates = getKeyboardStates(guesses, solution);
 
+  useEffect(()=>{
+    if(!startGame || isGameOver || difficulty !== 'Hard') return;
+    const countDown = setInterval(()=>{
+      setTimer(prev=>{
+        if(prev <= 1) {
+          setIsGameOver(true)
+          clearInterval(countDown)
+          return 0;
+        };
+        return prev - 1;
+      })      
+    }, 1000)  
+    return ()=> clearInterval(countDown)
+   }, [startGame, difficulty, isGameOver])
+
   setTimeout(() => {
     console.log(solution);
   }, 1200);
 
   return (
     <>
+    {
+      startGame ?
     <div className='flex flex-col justify-center items-center dark'>
-      {hint && <Hint hint={hint}/>}
+      {hint && difficulty === 'Easy' && <Hint hint={hint}/>}
+      {difficulty === 'Hard' && <Timer timer={timer}/>}
       <Grid
         guesses={guesses}
         currentGuess={currentGuess}
@@ -97,7 +122,8 @@ export default function App() {
         keyboardStates={keyboardStates}
         isGameOver={isGameOver}
       />
-    </div>
+    </div>: <Start setStartGame={setStartGame} difficulty={difficulty} setDifficulty={setDifficulty}/>
+    }
     {isGameOver &&  <GameOver/> }
     </>
   );
