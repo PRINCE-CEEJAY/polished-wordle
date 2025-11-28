@@ -1,32 +1,31 @@
 import type { GRID_PROPS } from '../../Types';
 import { getLetterState } from '../lib/utils';
-const rows = 6;
-const cols = 5;
 
-export default function Grid({ guesses, currentGuess, solution }: GRID_PROPS) {  
+
+export default function Grid({ guesses, currentGuess, solution, boxes }: GRID_PROPS) {  
   const allGuesses = [...guesses];
   if (currentGuess) {
     allGuesses.push(currentGuess);
   }
-  while (allGuesses.length < rows) {
+  while (allGuesses.length < boxes.row) {
     allGuesses.push('');
   }
 
   return (
     <div className='flex flex-col justify-center items-center p-2.5 gap-[5px]'>
-      {Array(rows)
+      {Array(boxes.row)
         .fill('')
         .map((_, rowIndex) => {
           const isComplete = guesses.length > rowIndex;
           const states = isComplete
             ? getLetterState(allGuesses[rowIndex], solution)
-            : Array(5).fill('');
+            : Array(boxes.col).fill('');
           return (
             <div
               key={rowIndex}
               className='flex gap-[5px]'
             >
-              {Array(cols)
+              {Array(boxes.col)
                 .fill('')
                 .map((_, colIndex) => {
                   const letter: string = allGuesses[rowIndex]?.[colIndex] || '';

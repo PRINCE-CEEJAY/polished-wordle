@@ -19,6 +19,7 @@ export default function App() {
   const [startGame, setStartGame] = useState(false)
   const [difficulty, setDifficulty] = useState<'Easy'|'Medium'|'Hard'>('Easy')
   const [timer, setTimer] = useState(120)
+  const [boxes, setBoxes] = useState({row: 6, col:5})
 
   const data = words.words
   
@@ -32,7 +33,7 @@ export default function App() {
         setSolution('ninja');
       }
     }
-    fetchWord();
+      fetchWord();
   }, [data]);
   
   useEffect(() => {
@@ -62,13 +63,13 @@ export default function App() {
     }, 2000);
   }
   function handleKeys(key: string) {
-    if (guesses.length === 6) {
+    if (guesses.length === boxes.row) {
       showMessage('You are out of guesses!');
       setIsGameOver(true)
       return;
     }
     if (key === 'ENTER') {
-      if (currentGuess.length === 5) {
+      if (currentGuess.length === boxes.col) {
         setGuesses([...guesses, currentGuess]);
 
         if (currentGuess === solution) {
@@ -79,7 +80,7 @@ export default function App() {
       }
     } else if (key === 'BACKSPACE') {
       setCurrentGuess((prev) => prev.slice(0, -1));
-    } else if (currentGuess.length < 5) {
+    } else if (currentGuess.length < boxes.row) {
       setCurrentGuess((prevGuess) => prevGuess + key.toLocaleLowerCase());
     }
   }
@@ -100,10 +101,6 @@ export default function App() {
     return ()=> clearInterval(countDown)
    }, [startGame, difficulty, isGameOver])
 
-  setTimeout(() => {
-    console.log(solution);
-  }, 1200);
-
   return (
     <>
     {
@@ -114,6 +111,7 @@ export default function App() {
       <Grid
         guesses={guesses}
         currentGuess={currentGuess}
+        boxes = {boxes}
         solution={solution}
         />
         {message && <Message message={message} />}
@@ -122,7 +120,7 @@ export default function App() {
         keyboardStates={keyboardStates}
         isGameOver={isGameOver}
       />
-    </div>: <Start setStartGame={setStartGame} difficulty={difficulty} setDifficulty={setDifficulty}/>
+    </div>: <Start setStartGame={setStartGame} difficulty={difficulty} setDifficulty={setDifficulty} setBoxes={setBoxes}/>
     }
     {isGameOver &&  <GameOver/> }
     </>
