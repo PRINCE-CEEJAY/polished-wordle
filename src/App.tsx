@@ -20,6 +20,7 @@ export default function App() {
   const [difficulty, setDifficulty] = useState<'Easy'|'Medium'|'Hard'>('Easy')
   const [timer, setTimer] = useState(120)
   const [boxes, setBoxes] = useState({row: 6, col:5})
+  const [gameResult, setGameResult] = useState<'lost'| 'won' | ''>('')
 
   const data = words.words
   
@@ -52,10 +53,6 @@ export default function App() {
     fetchHint();
   }, [solution]);
 
-
-
-  console.log(solution);
-  
   function showMessage(text: string) {
     setMessage(text);
     setTimeout(() => {
@@ -64,8 +61,10 @@ export default function App() {
   }
   function handleKeys(key: string) {
     if (guesses.length === boxes.row) {
+      setGameResult('lost')
       showMessage('You are out of guesses!');
       setIsGameOver(true)
+      setGuesses([])
       return;
     }
     if (key === 'ENTER') {
@@ -73,8 +72,9 @@ export default function App() {
         setGuesses([...guesses, currentGuess]);
 
         if (currentGuess === solution) {
-          setIsGameOver(true);
           showMessage('Congrats, you won');
+          setIsGameOver(true);
+          setGameResult('won')
         }
         setCurrentGuess('');
       }
@@ -100,7 +100,7 @@ export default function App() {
     }, 1000)  
     return ()=> clearInterval(countDown)
    }, [startGame, difficulty, isGameOver])
-
+ console.log('the solution is: ' + solution)
   return (
     <>
     {
@@ -120,9 +120,10 @@ export default function App() {
         keyboardStates={keyboardStates}
         isGameOver={isGameOver}
       />
-    </div>: <Start setStartGame={setStartGame} difficulty={difficulty} setDifficulty={setDifficulty} setBoxes={setBoxes}/>
+    </div> :
+    <Start setStartGame={setStartGame} difficulty={difficulty} setDifficulty={setDifficulty} setBoxes={setBoxes}/>
     }
-    {isGameOver &&  <GameOver/> }
+    {isGameOver && <GameOver gameResult = {gameResult} solution={solution}/> }
     </>
   );
 }
